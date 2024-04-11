@@ -4,8 +4,6 @@
 #include"CommFuction.h"
 #include "BaseObject.h"
 
-#define ARROW_FRAME_HEIGHT 384/2
-#define ARROW_FRAME_WIDTH 1536/8
 class Arrow :public BaseObject
 {
 public:
@@ -23,6 +21,7 @@ public:
 	SDL_Texture* arrowtext;
 
 	SDL_Rect ArrowdesRect;
+	SDL_Rect ArrowsourceRect;
 	SDL_Point centerarrowpoint;
 	SDL_Rect frame_clip_arrow[2][8];
 	int frame_x_;

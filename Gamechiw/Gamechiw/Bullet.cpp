@@ -5,8 +5,8 @@ bullet::bullet()
 	f1 = 0;
 	f2 = 0;
 	coll = false; //check if the bullet hit any golbin before
-	bulletSourceRect = { 1 ,1 ,14 * 2 ,14 * 2 };
-	bulletDesRect = { 0 , 0 , 14 * 2 ,14 * 2 };
+	bulletSourceRect = { 1 ,1 ,14  ,14  };
+	bulletDesRect = { 0 , 0 , 14  ,14  };
 }
 
 float bullet::getWAYf1(int _mx, int _my, int _sx, int _sy)

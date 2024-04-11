@@ -2,9 +2,12 @@
 
 Arrow::Arrow()
 {
-	ArrowdesRect = { SCREEN_WIDTH / 2 - PLAYER_FRAME_WIDTH / 2,SCREEN_HEIGHT / 2 - PLAYER_FRAME_HEIGHT / 2 - 50 ,ARROW_FRAME_WIDTH, ARROW_FRAME_HEIGHT};
-
-	centerarrowpoint = { ARROW_FRAME_WIDTH/2, ARROW_FRAME_HEIGHT/2 };
+	//ArrowdesRect = { SCREEN_WIDTH / 2 - PLAYER_FRAME_WIDTH / 2,SCREEN_HEIGHT / 2 - PLAYER_FRAME_HEIGHT / 2 - 50 ,ARROW_FRAME_WIDTH, ARROW_FRAME_HEIGHT};
+	//ArrowdesRect = { SCREEN_WIDTH / 2 - PLAYER_FRAME_WIDTH / 2,SCREEN_HEIGHT / 2 - PLAYER_FRAME_HEIGHT / 2 - 50,50,32 };
+	ArrowdesRect = { SCREEN_WIDTH / 2 - PLAYER_FRAME_WIDTH / 2+80,SCREEN_HEIGHT / 2 - PLAYER_FRAME_HEIGHT / 2 +40 ,50+10, 32+10 };
+	ArrowsourceRect = { 0,0,50+10,32 +10};
+	//centerarrowpoint = { ARROW_FRAME_HEIGHT/2, ARROW_FRAME_WIDTH/2 };
+	centerarrowpoint = { 17 ,17 };
 	maxframe_x_ = 2;
 	maxframe_y_ = 6;
 
@@ -42,14 +45,13 @@ void Arrow::Show(double angle, SDL_Renderer* des,bool attack)
 {
 	if (attack == true)
 	{
-		frame_y_ = 2 - 1;
-		for (frame_x_ = 0; frame_x_ <= maxframe_x_; frame_x_++)
-		{
+		//frame_y_ = 2 - 1;
+		frame_y_ = 0;
+		frame_x_ = 0;
 			SDL_Rect* current_clip = &frame_clip_arrow[frame_y_][frame_x_];
 			SDL_Rect renderQuad = { ArrowdesRect.x, ArrowdesRect.y, ARROW_FRAME_WIDTH, ARROW_FRAME_HEIGHT };
-			SDL_RenderCopyEx(des, p_object_, current_clip, &renderQuad, angle, &centerarrowpoint, typeFlip);
-
-		}
+			//SDL_RenderCopyEx(des, p_object_, current_clip, &renderQuad, angle, &centerarrowpoint, typeFlip);
+			SDL_RenderCopyEx(des, p_object_, &ArrowsourceRect, &ArrowdesRect, angle, &centerarrowpoint, typeFlip);
 	}
 	else
 	{
@@ -59,7 +61,8 @@ void Arrow::Show(double angle, SDL_Renderer* des,bool attack)
 		SDL_Rect* current_clip = &frame_clip_arrow[frame_y_][frame_x_];
 		SDL_Rect renderQuad = { ArrowdesRect.x, ArrowdesRect.y, ARROW_FRAME_WIDTH, ARROW_FRAME_HEIGHT };
 
-		SDL_RenderCopyEx(des, p_object_, current_clip, &renderQuad, angle, &centerarrowpoint, typeFlip);
+		//SDL_RenderCopyEx(des, p_object_, current_clip, &renderQuad, angle, &centerarrowpoint, typeFlip);
+		SDL_RenderCopyEx(des, p_object_, &ArrowsourceRect, &ArrowdesRect, angle, &centerarrowpoint , typeFlip);
 	}
 	
 }

@@ -9,12 +9,12 @@ Golbin::Golbin()
 	isDead = false;
 	attack = false;
 	numchar = 1;
-	
+
 	bosshealth = 10;
 
-	GolbinDesRect.x = -SCREEN_WIDTH  + (rand() % (SCREEN_WIDTH  + 1 - -SCREEN_WIDTH ));
-	GolbinDesRect.y = -SCREEN_HEIGHT  + (rand() % (SCREEN_HEIGHT  + 1 - -SCREEN_HEIGHT ));
-	
+	GolbinDesRect.x = -SCREEN_WIDTH + (rand() % (SCREEN_WIDTH + 1 - -SCREEN_WIDTH));
+	GolbinDesRect.y = -SCREEN_HEIGHT + (rand() % (SCREEN_HEIGHT + 1 - -SCREEN_HEIGHT));
+
 	int TownDesRecty = SCREEN_HEIGHT / 2 - 256 / 2;
 	int starty = GolbinDesRect.y;
 	if (starty >= TownDesRecty)
@@ -25,7 +25,7 @@ Golbin::Golbin()
 	{
 		front = false;
 	}
-	
+
 	GolbinDesRect.w = GOLBIN_FRAME_WIDTH;
 	GolbinDesRect.h = GOLBIN_FRAME_HEIGHT;
 
@@ -165,8 +165,8 @@ void Golbin::Show(SDL_Renderer* screen, SDL_Rect* current_clip, SDL_Texture* gol
 	{
 		SDL_Rect TownDesRect = { SCREEN_WIDTH / 2 - 128 / 2 ,SCREEN_HEIGHT / 2 - 256 / 2 ,128,256 };
 		SDL_Rect UnderTownDesRect = { SCREEN_WIDTH / 2 - 45 ,SCREEN_HEIGHT / 2 + 45,85,55 };
-		SDL_Rect GolbinDesRect2 = { GolbinDesRect.x + GOLBIN_FRAME_HEIGHT / 4  ,GolbinDesRect.y + GOLBIN_FRAME_WIDTH / 4  ,74-40 , 79+40 };
-		float angle = atan2((TownDesRect.y - GolbinDesRect.y+100), (TownDesRect.x - GolbinDesRect.x));
+		SDL_Rect GolbinDesRect2 = { GolbinDesRect.x + GOLBIN_FRAME_HEIGHT / 4  ,GolbinDesRect.y + GOLBIN_FRAME_WIDTH / 4  ,74 - 40 , 79 + 40 };
+		float angle = atan2((TownDesRect.y - GolbinDesRect.y + 100), (TownDesRect.x - GolbinDesRect.x));
 		float f1, f2;
 		f1 = cos(angle) * GOLBIN_SPEED;
 		f2 = sin(angle) * GOLBIN_SPEED;
@@ -206,7 +206,7 @@ void Golbin::Show(SDL_Renderer* screen, SDL_Rect* current_clip, SDL_Texture* gol
 
 	//SDL_Rect* current_clip = &frame_clip_golbin[frame_y_][frame_x_];
 	//SDL_Delay(30);
-	SDL_Rect renderQuad = { GolbinDesRect.x, GolbinDesRect.y, ARROW_FRAME_WIDTH, ARROW_FRAME_HEIGHT };
+	SDL_Rect renderQuad = { GolbinDesRect.x, GolbinDesRect.y, GOLBIN_FRAME_WIDTH, GOLBIN_FRAME_HEIGHT };
 
-	SDL_RenderCopyEx(screen, golbin , current_clip, &renderQuad, NULL, NULL, typeFlip);
+	SDL_RenderCopyEx(screen, golbin, current_clip, &renderQuad, NULL, NULL, typeFlip);
 }

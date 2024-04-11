@@ -75,14 +75,14 @@ void game:: loadMainObj()
 	Town = IMG_LoadTexture(gscreen, "img/Tower_Blue.png");
 	
 	//load player
-	p_player.loadImg("img/Archer_Blue_(NoArms).png", gscreen);
+	p_player.loadImg("img/Pawn_Blue.png", gscreen);
 	p_player.set_clips();
 
 	//load arrowplayer
-	p_arrow.loadImg("img/Archer_Bow_Blue.png", gscreen);
-	p_arrow.setclips();
+	p_arrow.loadImg("img/Mini gun.png", gscreen);
+//	p_arrow.setclips();
 	//load bullet
-	bulletTex = IMG_LoadTexture(gscreen, "img/Bullet2.png");
+	bulletTex = IMG_LoadTexture(gscreen, "img/Bullet3.png");
 
 	//setclip for golbins
 	clipgolbin.setclip();
@@ -93,13 +93,20 @@ void game:: loadMainObj()
 void game::arrowActive()
 {
 	SDL_GetMouseState(&mouseposx, &mouseposy);
-	angle = atan2((mouseposy - p_arrow.ArrowdesRect.y), (mouseposx - p_arrow.ArrowdesRect.x)) * 180.0 / 3.14152;
-	if (mouseposx - p_arrow.ArrowdesRect.x < 0)
+	if (mouseposx - p_arrow.ArrowdesRect.x <= 0)
 	{
+		p_player.typeFlip = SDL_FLIP_HORIZONTAL;
 		p_arrow.typeFlip = SDL_FLIP_HORIZONTAL;
+		p_arrow.ArrowUpdatePos(p_player.playerdesRect.x + 80 - 30, p_player.playerdesRect.y + 85 );
 	}
 	else
-		p_arrow.typeFlip = SDL_FLIP_VERTICAL;
+	{
+		p_player.typeFlip = SDL_FLIP_NONE;
+		p_arrow.typeFlip = SDL_FLIP_NONE;
+		p_arrow.ArrowUpdatePos(p_player.playerdesRect.x + 80, p_player.playerdesRect.y + 85);
+	}
+	//p_arrow.ArrowUpdatePos(p_player.playerdesRect.x + 80, p_player.playerdesRect.y + 85);
+	angle = atan2((mouseposy - p_arrow.ArrowdesRect.y), (mouseposx - p_arrow.ArrowdesRect.x)) * 180.0 / 3.14152;
 	//add bullet base on mouse state
 	if (mousedown)
 	{
@@ -256,7 +263,7 @@ void game::create()
 
 	if (Town != NULL)
 	{
-		SDL_RenderCopy(gscreen, Town, NULL, &TownDesRect);
+		//SDL_RenderCopy(gscreen, Town, NULL, &TownDesRect);
 	}
 	else
 	{
@@ -300,6 +307,7 @@ void game::gameloop()
 				p_arrow.attack = false;
 				break;
 			}
+			p_player.HandleInputAction(g_event, gscreen);
 
 		}
 		SDL_SetRenderDrawColor(gscreen, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR); 
@@ -308,14 +316,17 @@ void game::gameloop()
 		create();
 
 		creategolbin();
-		golbinActive();
-		SDL_RenderCopy(gscreen, Town, NULL, &TownDesRect);
-		golbinActivefront();
+		//golbinActive();
+		//SDL_RenderCopy(gscreen, Town, NULL, &TownDesRect);
+		//golbinActivefront();
 
 		p_player.Show(gscreen);
+		p_player.Doplayer();
 		
 		arrowActive();
+		
 		p_arrow.Show(angle, gscreen, p_arrow.attack);
+		
 	
 		SDL_RenderPresent(gscreen);
 	}

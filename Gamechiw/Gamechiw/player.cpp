@@ -4,15 +4,24 @@ player::player()
 {
 	framex_ = 0;
 	framey_ = 0;
-	
-	rect_.x = SCREEN_WIDTH/2 - PLAYER_FRAME_WIDTH/2 ;
-	rect_.y = SCREEN_HEIGHT/2 - PLAYER_FRAME_HEIGHT/2 - 50 ;
+	p_playermovesound = Mix_LoadWAV("sound/running.wav");
 
-	width_frame_ = PLAYER_FRAME_WIDTH;
-	height_frame_ = PLAYER_FRAME_HEIGHT;
+	playerdesRect.x = SCREEN_WIDTH/2 ;
+	playerdesRect.y = SCREEN_HEIGHT/2;
+
+	rect_.x = SCREEN_WIDTH/2 ;
+	rect_.y = SCREEN_HEIGHT /2 ;
+
+	x_pos_ = SCREEN_WIDTH / 2-96;
+	y_pos_ = SCREEN_HEIGHT / 2-66;
+
+	x_val = 0;
+	y_val = 0;
 
 	typeFlip = SDL_FLIP_NONE;
 	status_ = STAND;
+	input_type_.standing_ = 1;
+	health = 5;
 }
 
 player::~player()
@@ -25,8 +34,8 @@ bool player::loadImg(std::string path, SDL_Renderer* screen)
 	bool ret = BaseObject::loadImg(path, screen);
 	if (ret == true)
 	{
-		width_frame_ = rect_.w / 6;
-		height_frame_ = rect_.h / 6;
+		width_frame_ = rect_.w / 6 ;
+		height_frame_ = rect_.h / 6 ;
 	}
 	return ret;
 }
@@ -55,7 +64,7 @@ void player::Show(SDL_Renderer* des)
 	
 	SDL_Delay(30);
 
-	if (status_ = STAND)
+	if (input_type_.standing_==1)
 	{
 		framey_ = 1 - 1;
 		framex_++;
@@ -64,6 +73,7 @@ void player::Show(SDL_Renderer* des)
 	}
 	else
 	{
+		Mix_PlayChannel(-1, p_playermovesound, 0);
 		framey_ = 2 - 1;
 		framex_++;
 		if (framex_ >= 6)
@@ -89,16 +99,20 @@ void player::Doplayer()
 		if (input_type_.left_ == 1)
 		{
 			x_val -= PLAYER_SPEED;
+			
 		}
+
 		if (input_type_.right_ == 1)
 		{
 			x_val += PLAYER_SPEED;
+			
 		}
 
 		if (input_type_.up_ == 1)
 		{
 			y_val -= PLAYER_SPEED;
 		}
+
 		if (input_type_.down_ == 1)
 		{
 			y_val += PLAYER_SPEED;
@@ -106,6 +120,10 @@ void player::Doplayer()
 	x_pos_ += x_val;
 	y_pos_ += y_val;
 
+	if (x_pos_ < 0 -66) x_pos_ = 0-66;
+	if (y_pos_ < 0 -68) y_pos_ = 0-68;
+	if (x_pos_ + 126 > SCREEN_WIDTH ) x_pos_ = SCREEN_WIDTH-126;
+	if (y_pos_ + 122 > SCREEN_HEIGHT ) y_pos_ = SCREEN_HEIGHT-122;
 	//CentrerEntityOnMap();
 }
 
@@ -122,75 +140,74 @@ void player::HandleInputAction(SDL_Event events, SDL_Renderer* des)
 			input_type_.right_ = 1;
 			input_type_.left_ = 0;
 			input_type_.standing_ = 0;
+			break;
 		}
-		break;
 		case SDLK_a:
 		{
 			status_ = WALK_LEFT;
 			input_type_.right_ = 0;
 			input_type_.left_ = 1;
 			input_type_.standing_ = 0;
+			break;
 		}
-		break;
 		case SDLK_w:
 		{
 			status_ = WALK_UP;
 			input_type_.up_ = 1;
 			input_type_.down_ = 0;
 			input_type_.standing_ = 0;
+			break;
 		}
-		break;
 		case SDLK_s:
 		{
 			status_ = WALK_DOWN;
 			input_type_.up_ = 0;
 			input_type_.down_ = 1;
 			input_type_.standing_ = 0;
+			break;
 		}
-		break;
 		default:
 		{
 			input_type_.standing_ = 1;
+			break;
 		}
-		break;
 		}
 
 	}
 	else if (events.type == SDL_KEYUP)
 	{
+		input_type_.standing_ = 1;
 		switch (events.key.keysym.sym)
 		{
-			input_type_.standing_ = 1;
 		case SDLK_d:
 		{
 			status_ = WALK_RIGHT;
 			input_type_.right_ = 0;
 			input_type_.standing_ = 1;
+			break;
 		}
-		break;
 		case SDLK_a:
 		{
 			status_ = WALK_LEFT;
 			input_type_.left_ = 0;
 			input_type_.right_ = 0;
 			input_type_.standing_ = 1;
+			break;
 		}
-		break;
 		case SDLK_w:
 		{
 			status_ = WALK_UP;
 			input_type_.up_ = 0;
 			input_type_.standing_ = 1;
-
+			break;
 		}
-		break;
 		case SDLK_s:
 		{
 			status_ = WALK_DOWN;
 			input_type_.down_ = 0;
 			input_type_.standing_ = 1;
+			break;
 		}
-		break;
 		}
 	}
 }

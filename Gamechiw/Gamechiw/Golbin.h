@@ -15,28 +15,32 @@ public:
 	//current position
 	float px, py;
 	long long countdead;
-	void setGolbin(SDL_Renderer* screen);
 	void setclip();
 	void updatePos(SDL_Rect playerrect);
-	void Show(SDL_Renderer* screen, SDL_Rect* current_clip, SDL_Texture* golbin);
-	bool CheckCollision(const SDL_Rect& UnderTown, const SDL_Rect& Golbin);
+	void Show(SDL_Renderer* screen, SDL_Rect playerDesRect, SDL_Texture* p_object);
+
+	int countinteraction;
 
 	bool front;//front town
 	bool faceLeft;
 	bool isDead;
 	bool attack;
-	int bosshealth = 10;
+	int health ;
 	SDL_Rect GolbinDesRect;
 	int numchar;
 	int frame_x_;
 	int frame_y_;
+	int frame_x_dead;
+	int frame_y_dead;
 	int maxframe_x_;
 	int maxframe_y_;
 	SDL_Rect frame_clip_golbin[5][7];
-	SDL_Texture* golbintexture[MAX_GOLBIN_NUM];
-
-private:
+	SDL_Rect frame_clip_golbin_dead[2][7];
+	SDL_Texture* GolbinTexture;
+	SDL_Texture* GolbinDead;
 	SDL_RendererFlip typeFlip;
+private:
+	
 };
 
 #endif // !GOLBIN_H_

@@ -11,10 +11,11 @@
 #include <SDL_ttf.h>
 #include<fstream>
 #include<string.h>
+#include<SDL_mixer.h>
 using namespace std;
 //screen
-const int SCREEN_WIDTH = 320*2;
-const int SCREEN_HEIGHT = 320*2;
+const int SCREEN_WIDTH = 394*2;
+const int SCREEN_HEIGHT = 394*2;
 const int SCREEN_BPP = 32;
 
 const int COLOR_KEY_R = 167;
@@ -51,6 +52,8 @@ namespace SDLCommFuction {
 #define GOLBIN_FRAME_HEIGHT 960/5
 #define GOLBIN_FRAME_WIDTH 1344/7
 
+#define GOLBINDEAD_FRAME_HEIGHT 256/2
+#define GOLBINDEAD_FRAME_WIDTH 896/7
 typedef struct Input
 {
 	int left_;

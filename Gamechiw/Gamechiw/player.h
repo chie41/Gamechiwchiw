@@ -34,6 +34,7 @@ public:
 
 	SDL_RendererFlip typeFlip;
 
+	int health;
 private:
 	int x_val;
 	int y_val;
@@ -52,6 +53,8 @@ private:
 	// screen;
 	int start_x_;
 	int start_y_;
+
+	Mix_Chunk* p_playermovesound;
 	
 };
 

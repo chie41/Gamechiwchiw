@@ -2,6 +2,10 @@
 
 Golbin::Golbin()
 {
+	frame_x_ = 0;
+	frame_y_ = 0;
+	frame_x_dead = 0;
+	frame_y_dead = 0;
 
 	px = 100;
 	py = 100;
@@ -10,11 +14,13 @@ Golbin::Golbin()
 	attack = false;
 	numchar = 1;
 
-	bosshealth = 10;
+	health = 5;
+
+	countinteraction = 0;
 
 	GolbinDesRect.x = -SCREEN_WIDTH + (rand() % (SCREEN_WIDTH + 1 - -SCREEN_WIDTH));
 	GolbinDesRect.y = -SCREEN_HEIGHT + (rand() % (SCREEN_HEIGHT + 1 - -SCREEN_HEIGHT));
-
+	
 	int TownDesRecty = SCREEN_HEIGHT / 2 - 256 / 2;
 	int starty = GolbinDesRect.y;
 	if (starty >= TownDesRecty)
@@ -34,33 +40,12 @@ Golbin::Golbin()
 	maxframe_x_ = 5;
 	maxframe_y_ = 7;
 }
-void Golbin::setGolbin(SDL_Renderer* screen)
+/*void Golbin::setGolbin(SDL_Renderer* screen)
 {
-	golbintexture[1] = IMG_LoadTexture(screen, "img/Golbin-a.png");
-	if (golbintexture[1] == NULL)
-	{
-		printf("fail to load golbin 1\n");
-	}
-	/*string file_img = "";
-	for (int i = 1; i <= MAX_GOLBIN_NUM  ; i++)
-	{
-		file_img = "img/Golbin-";
-		printf("%s\n", file_img);
-		file_img =  file_img + char(i + 96) ;
-		printf("%s\n", file_img);
-		file_img = file_img + ".png";
-		printf("%c\n", char(i + 96));
+	GolbinTexture = IMG_LoadTexture(screen, "img/Golbin-a.png");
+	GolbinDead = IMG_LoadTexture(screen, "img/Golbin-a.png");
+}*/
 
-		printf("%s\n", file_img);
-
-		golbintexture[i] = IMG_LoadTexture(screen, file_img.c_str());
-		if (golbintexture[i] == NULL)
-		{
-			printf("fail to load golbin %d\n", i);
-		}
-
-	}*/
-}
 void Golbin::setclip()
 {
 	for (int i = 0; i < maxframe_x_; i++)
@@ -71,107 +56,71 @@ void Golbin::setclip()
 			frame_clip_golbin[i][j].w = GOLBIN_FRAME_WIDTH;
 			frame_clip_golbin[i][j].h = GOLBIN_FRAME_HEIGHT;
 		}
+	//golbin dead
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 7; j++)
+		{
+			frame_clip_golbin_dead[i][j].x = GOLBINDEAD_FRAME_WIDTH * j;
+			frame_clip_golbin_dead[i][j].y = GOLBINDEAD_FRAME_HEIGHT;
+			frame_clip_golbin_dead[i][j].w = GOLBINDEAD_FRAME_WIDTH;
+			frame_clip_golbin_dead[i][j].h = GOLBINDEAD_FRAME_HEIGHT;
+		}
 }
 
-bool Golbin::CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2)
-{
-	int left_a = object1.x;
-	int right_a = object1.x + object1.w;
-	int top_a = object1.y;
-	int bottom_a = object1.y + object1.h;
-
-	int left_b = object2.x;
-	int right_b = object2.x + object2.w;
-	int top_b = object2.y;
-	int bottom_b = object2.y + object2.h;
-
-	// Case 1: size object 1 < size object 2
-	if (left_a > left_b && left_a < right_b)
-	{
-		if (top_a > top_b && top_a < bottom_b)
-		{
-			return true;
-		}
-	}
-
-	if (left_a > left_b && left_a < right_b)
-	{
-		if (bottom_a > top_b && bottom_a < bottom_b)
-		{
-			return true;
-		}
-	}
-
-	if (right_a > left_b && right_a < right_b)
-	{
-		if (top_a > top_b && top_a < bottom_b)
-		{
-			return true;
-		}
-	}
-
-	if (right_a > left_b && right_a < right_b)
-	{
-		if (bottom_a > top_b && bottom_a < bottom_b)
-		{
-			return true;
-		}
-	}
-
-	// Case 2: size object 1 < size object 2
-	if (left_b > left_a && left_b < right_a)
-	{
-		if (top_b > top_a && top_b < bottom_a)
-		{
-			return true;
-		}
-	}
-
-	if (left_b > left_a && left_b < right_a)
-	{
-		if (bottom_b > top_a && bottom_b < bottom_a)
-		{
-			return true;
-		}
-	}
-
-	if (right_b > left_a && right_b < right_a)
-	{
-		if (top_b > top_a && top_b < bottom_a)
-		{
-			return true;
-		}
-	}
-
-	if (right_b > left_a && right_b < right_a)
-	{
-		if (bottom_b > top_a && bottom_b < bottom_a)
-		{
-			return true;
-		}
-	}
-
-	// Case 3: size object 1 = size object 2
-	if (top_a == top_b && right_a == right_b && bottom_a == bottom_b)
-	{
-		return true;
-	}
-
-	return false;
-}
-void Golbin::Show(SDL_Renderer* screen, SDL_Rect* current_clip, SDL_Texture* golbin)
+void Golbin::updatePos(SDL_Rect playerDesRect)
 {
 	if (isDead == false)
 	{
-		SDL_Rect TownDesRect = { SCREEN_WIDTH / 2 - 128 / 2 ,SCREEN_HEIGHT / 2 - 256 / 2 ,128,256 };
-		SDL_Rect UnderTownDesRect = { SCREEN_WIDTH / 2 - 45 ,SCREEN_HEIGHT / 2 + 45,85,55 };
+		SDL_Rect GolbinDesRect2 = { GolbinDesRect.x + 52,GolbinDesRect.y + 52,66,80 };
+		float angle = atan2((playerDesRect.y - GolbinDesRect2.y ), (playerDesRect.x - GolbinDesRect2.x));
+		float f1, f2;
+		f1 = cos(angle) * GOLBIN_SPEED;
+		f2 = sin(angle) * GOLBIN_SPEED;
+		//SDL_Rect playerDesRect2 = { playerDesRect.x -10,playerDesRect.y -10,playerDesRect.w-10,playerDesRect.h -10};
+		if (SDL_HasIntersection(&GolbinDesRect2, &playerDesRect))
+		{
+			frame_y_ = 3 - 1;
+			frame_x_++;
+			countinteraction++;
+
+		}
+		else {
+			frame_y_ = 2 - 1;
+			frame_x_++;
+			GolbinDesRect.x += f1;
+			GolbinDesRect.y += f2;
+			countinteraction = 0;
+		}
+		if (GolbinDesRect.x < playerDesRect.x - 58/2 )
+		{
+
+			typeFlip = SDL_FLIP_NONE;
+		}
+		else
+		{
+			typeFlip = SDL_FLIP_HORIZONTAL;
+		}
+		if (frame_x_ >= maxframe_x_ - 1)
+		{
+			frame_x_ = 0;
+		}
+	}
+}
+
+
+void Golbin::Show(SDL_Renderer* screen, SDL_Rect playerDesRect,SDL_Texture* p_object )
+{
+	if (isDead == false)
+	{
+		//	SDL_Rect TownDesRect = { SCREEN_WIDTH / 2 - 128 / 2 ,SCREEN_HEIGHT / 2 - 256 / 2 ,128,256 };
+			//SDL_Rect UnderTownDesRect = { SCREEN_WIDTH / 2 - 45 ,SCREEN_HEIGHT / 2 + 45,85,55 };
 		SDL_Rect GolbinDesRect2 = { GolbinDesRect.x + GOLBIN_FRAME_HEIGHT / 4  ,GolbinDesRect.y + GOLBIN_FRAME_WIDTH / 4  ,74 - 40 , 79 + 40 };
-		float angle = atan2((TownDesRect.y - GolbinDesRect.y + 100), (TownDesRect.x - GolbinDesRect.x));
+		float angle = atan2((playerDesRect.y - GolbinDesRect.y + 100), (playerDesRect.x - GolbinDesRect.x));
 		float f1, f2;
 		f1 = cos(angle) * GOLBIN_SPEED;
 		f2 = sin(angle) * GOLBIN_SPEED;
 
-		if (GolbinDesRect.x < TownDesRect.x)
+		if (GolbinDesRect.x < playerDesRect.x)
 		{
 
 			typeFlip = SDL_FLIP_NONE;
@@ -181,32 +130,35 @@ void Golbin::Show(SDL_Renderer* screen, SDL_Rect* current_clip, SDL_Texture* gol
 			typeFlip = SDL_FLIP_HORIZONTAL;
 		}
 
-		if (CheckCollision(GolbinDesRect2, UnderTownDesRect))
+		frame_y_ = 2 - 1;
+		frame_x_++;
+		if (frame_x_ >= maxframe_x_ - 1)
 		{
-			frame_y_ = 3 - 1;
-			frame_x_++;
-			if (frame_x_ >= maxframe_x_ - 1)
-			{
-				frame_x_ = 0;
-			}
+			frame_x_ = 0;
 		}
-		else
+		GolbinDesRect.x += f1;
+		GolbinDesRect.y += f2;
+		printf("%d %d \n", GolbinDesRect.x, GolbinDesRect.y);
+		SDL_Rect* current_clip = &frame_clip_golbin[frame_x_][frame_y_];
+		SDL_Rect renderQuad = { GolbinDesRect.x, GolbinDesRect.y, GOLBIN_FRAME_WIDTH, GOLBIN_FRAME_HEIGHT };
+		if (p_object == NULL)
 		{
-			frame_y_ = 2 - 1;
-			frame_x_++;
-			if (frame_x_ >= maxframe_x_ - 1)
-			{
-				frame_x_ = 0;
-			}
-			GolbinDesRect.x += f1;
-			GolbinDesRect.y += f2;
+			printf("GoblinText NULL\n");
 		}
+		SDL_RenderCopyEx(screen, p_object, current_clip, &renderQuad, NULL, NULL, typeFlip);
+
+	}
+	else
+	{
+		frame_y_dead = 6 - 1;
+		frame_x_dead++;
+		if (frame_x_dead >= 7-1)
+		{
+			frame_x_dead = 0;
+		}
+		SDL_Rect current_clip = frame_clip_golbin_dead[frame_x_][frame_y_];
+		SDL_Rect renderQuad = { GolbinDesRect.x, GolbinDesRect.y, GOLBINDEAD_FRAME_WIDTH, GOLBINDEAD_FRAME_HEIGHT };
+		SDL_RenderCopyEx(screen, p_object , &current_clip, &renderQuad, NULL, NULL, typeFlip);
 	}
 
-
-	//SDL_Rect* current_clip = &frame_clip_golbin[frame_y_][frame_x_];
-	//SDL_Delay(30);
-	SDL_Rect renderQuad = { GolbinDesRect.x, GolbinDesRect.y, GOLBIN_FRAME_WIDTH, GOLBIN_FRAME_HEIGHT };
-
-	SDL_RenderCopyEx(screen, golbin, current_clip, &renderQuad, NULL, NULL, typeFlip);
 }

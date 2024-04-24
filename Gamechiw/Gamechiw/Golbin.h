@@ -19,7 +19,7 @@ public:
 	void updatePos(SDL_Rect playerrect);
 	void Show(SDL_Renderer* screen, SDL_Rect playerDesRect, SDL_Texture* p_object);
 
-	int countinteraction;
+	long long countinteraction;
 
 	bool front;//front town
 	bool faceLeft;

@@ -418,11 +418,11 @@ void game::arrowActive()
 		_bullet.push_back(__bullet);
 	}
 
-	for (int i = 0; i < _bullet.size(); i++)
+	for (int i = 0; i < _bullet.size(); ++i)
 	{
 		//update and check
 		_bullet[i].updatebullet();
-		for (int j = 0; j < golbin_list.size(); j++)
+		for (int j = 0; j < golbin_list.size(); ++j)
 		{
 			if (golbin_list[j].isDead== false)
 			{
@@ -440,66 +440,66 @@ void game::arrowActive()
 			}
 
 		}
-		SDL_Rect nobulletzone = { p_player.playerdesRect.x - 20,p_player.playerdesRect.y - 20,p_player.playerdesRect.w + 20,p_player.playerdesRect.h + 20 };
 		//draw the bullet
-		if (_bullet[i].disapear() == false && !SDL_HasIntersection(&_bullet[i].bulletDesRect, &p_arrow.ArrowdesRect))
+		if (!_bullet[i].disapear() && !SDL_HasIntersection(&_bullet[i].bulletDesRect, &p_arrow.ArrowdesRect))
 		{
-			//SDL_RenderCopy(gscreen, bulletTex, NULL, &_bullet[i].bulletDesRect);
 			SDL_RenderCopyEx(gscreen, bulletTex, NULL, &_bullet[i].bulletDesRect, p_arrow.angle, &p_arrow.centerarrowpoint,p_arrow.typeFlip );
 		}
 
+	}
+	for (int i = 0; i < _bullet.size(); ++i)
 		if (_bullet[i].disapear())
 		{
 			_bullet.erase(_bullet.begin() + i);
 		}
-
-	}
 
 
 }
 
 void game::golbinActive()
 {
-	for (int i = 0; i < golbin_list.size(); i++)
+	for (int i = 0; i < golbin_list.size(); ++i)
 	{
+		if (golbin_list[i].isDead) {
+			golbin_list[i].countdead++;
 
-			if (golbin_list[i].isDead) {
-				golbin_list[i].countdead++;
+			SDL_Rect playerDesRect2 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
 
-				SDL_Rect playerDesRect2 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
+			golbin_list[i].Show(gscreen, playerDesRect2, GolbinDead);
 
-				golbin_list[i].Show(gscreen, playerDesRect2, GolbinDead);
-
-				if (golbin_list[i].countdead >= 200)
-				{
-					golbin_list.erase(golbin_list.begin() + i);
-				}
-			}
-			if (!golbin_list[i].isDead)//the golbin must alive to be draw on the screen
+			if (golbin_list[i].countdead >= 50)
 			{
-				SDL_Rect playerDesRect2 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
-				golbin_list[i].updatePos(playerDesRect2);
-				SDL_Rect* current_clip = &clipgolbin.frame_clip_golbin[golbin_list[i].frame_y_][golbin_list[i].frame_x_];
-				SDL_Rect renderQuad = { golbin_list[i].GolbinDesRect.x , golbin_list[i].GolbinDesRect.y, GOLBIN_FRAME_WIDTH, GOLBIN_FRAME_HEIGHT};
-				SDL_Rect renderQuad2 = { golbin_list[i].GolbinDesRect.x +52, golbin_list[i].GolbinDesRect.y+42, 203/3,37/3 };
-				if(GolbinTexture == NULL)
-				{
-					printf("GolbinTexture NULLLLLL \n");
-				}
-				SDL_Texture* GolbinSize = IMG_LoadTexture(gscreen, "img/Golbinsize.png");
-				SDL_RenderCopyEx(gscreen, GolbinTexture, current_clip, &renderQuad, NULL, NULL, golbin_list[i].typeFlip);
-				SDL_RenderCopy(gscreen, blood[golbin_list[i].health], NULL, &renderQuad2);
-				//check if golbin attack player then player health --
-				if (golbin_list[i].countinteraction > 5)
-				{
-					Mix_PlayChannel(-1, golbinattacksound, 0);
-					p_player.health--;
-					golbin_list[i].countinteraction = 0;
-				}
-
+				golbin_list.erase(golbin_list.begin() + i);
+			}
+		}
+		
+	}
+	for (int i = 0; i < golbin_list.size(); ++i)
+	{
+		if (!golbin_list[i].isDead)
+		{
+			SDL_Rect playerDesRect2 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
+			golbin_list[i].updatePos(playerDesRect2);
+			SDL_Rect* current_clip = &clipgolbin.frame_clip_golbin[golbin_list[i].frame_y_][golbin_list[i].frame_x_];
+			SDL_Rect renderQuad = { golbin_list[i].GolbinDesRect.x , golbin_list[i].GolbinDesRect.y, GOLBIN_FRAME_WIDTH, GOLBIN_FRAME_HEIGHT };
+			SDL_Rect renderQuad2 = { golbin_list[i].GolbinDesRect.x + 52, golbin_list[i].GolbinDesRect.y + 42, 203 / 3,37 / 3 };
+			if (GolbinTexture == NULL)
+			{
+				printf("GolbinTexture NULLLLLL \n");
+			}
+			SDL_RenderCopyEx(gscreen, GolbinTexture, current_clip, &renderQuad, NULL, NULL, golbin_list[i].typeFlip);
+			SDL_RenderCopy(gscreen, blood[golbin_list[i].health], NULL, &renderQuad2);
+			//check if golbin attack player then player health --
+			if (golbin_list[i].countinteraction > 5)
+			{
+				Mix_PlayChannel(-1, golbinattacksound, 0);
+				p_player.health--;
+				golbin_list[i].countinteraction = 0;
 			}
 
-		
+		}
+
+
 	}
 }
 void game::creategolbin()
@@ -527,7 +527,7 @@ void game::createmushroom()
 			mushroom_list.push_back(__mushroom);
 		}
 	}
-	for (int i = 0; i < mushroom_list.size(); i++)
+	for (int i = 0; i < mushroom_list.size(); ++i)
 	{
 		SDL_Rect playerDesRect3 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
 		if (SDL_HasIntersection(&playerDesRect3, &mushroom_list[i].MushroomDesRect) && mushroom_list[i].picked == false)
@@ -536,21 +536,21 @@ void game::createmushroom()
 			score++;
 			mushroom_list[i].picked = true;
 		}
-
-		if (mushroom_list[i].picked)
-		{	
-			mushroom_list[i].mushroomcountime++;
-			if (mushroom_list[i].mushroomcountime > 200)
-			{
-				mushroom_list.erase(mushroom_list.begin() + i);
-			}
-		}
 		
 		if (!mushroom_list[i].picked) // show mushroom hasn't been picked to screen
 		{
 			SDL_RenderCopy(gscreen, Mushroomtexture, NULL, &mushroom_list[i].MushroomDesRect);
 		}
 	
+	}
+	for (int i = 0; i < mushroom_list.size(); ++i)
+	if (mushroom_list[i].picked)
+	{
+		mushroom_list[i].mushroomcountime++;
+		if (mushroom_list[i].mushroomcountime > 200)
+		{
+			mushroom_list.erase(mushroom_list.begin() + i);
+		}
 	}
 }
 void game::create()

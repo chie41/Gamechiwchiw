@@ -105,8 +105,8 @@ void game::loadMenuTexture()
 	MenuText[3] = IMG_LoadTexture(gscreen, "img/MenuPressSetting.png");
 	MenuText[4] = IMG_LoadTexture(gscreen, "img/MenuPressQuit.png");
 	MenuText[5] = IMG_LoadTexture(gscreen, "img/HowToPlay.png");
-	MenuText[6] = IMG_LoadTexture(gscreen, "img/SettingMusicOn.png");
-	MenuText[7] = IMG_LoadTexture(gscreen, "img/SettingMusicOff.png");
+	MenuText[6] = IMG_LoadTexture(gscreen, "img/Setting.png");
+	//MenuText[7] = IMG_LoadTexture(gscreen, "img/SettingMusicOff.png");
 
 	MenuText[8] = IMG_LoadTexture(gscreen, "img/pause.png");
 	MenuText[9] = IMG_LoadTexture(gscreen, "img/presspause.png");
@@ -122,14 +122,9 @@ void game::drawmenu()
 	SDL_GetMouseState(&mouseposx, &mouseposy);
 	//SDL_RenderClear(gscreen);
 	//draw setting
-	if (setting && MusicOn) 
+	if (setting) 
 	{
 		SDL_RenderCopy(gscreen, MenuText[6], NULL, NULL);
-	}
-
-	if (setting && !MusicOn)
-	{
-		SDL_RenderCopy(gscreen, MenuText[7], NULL, NULL);
 	}
 
 	if (mainmenu && !howtoplay && !setting)
@@ -196,25 +191,74 @@ bool game::MenuLoop()
 	//music
 	if (setting == true)
 	{
-		if (MusicOn == true)
+		//button [-] musicvolume
+		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
-			if (mouseposx > 100 * 2 && mouseposx < 150 * 2 && mouseposy > 136 * 2 && mouseposy < 176 * 2)
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume -= 10;
+			if (MusicVolume < 0)
 			{
-				Mix_PlayChannel(-1, menusoundclick, 0);
-				Mix_VolumeMusic(0);
-				MusicOn = false;
+				MusicVolume = 0;
 			}
+			Mix_VolumeMusic(MusicVolume);
 		}
-		else
-		if (MusicOn == false)
+		//button [+] musicvolume
+		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
-			if (mouseposx > 100 * 2 && mouseposx < 150 * 2 && mouseposy > 136 * 2 && mouseposy < 176 * 2)
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume += 10;
+			if (MusicVolume > 100)
 			{
-				Mix_PlayChannel(-1, menusoundclick, 0);
-				Mix_VolumeMusic(60);
-				MusicOn = true;
+				MusicVolume = 100;
 			}
+			Mix_VolumeMusic(MusicVolume);
 		}
+		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 142 * 2 && mouseposy < 169 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume += 10;
+			if (MusicVolume > 100)
+			{
+				MusicVolume = 100;
+			}
+			Mix_VolumeMusic(MusicVolume);
+		}
+
+		//button [-] SFXvolume
+		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume -= 10;
+			if (SFXVolume < 0)
+			{
+				SFXVolume = 0;
+			}
+			Mix_Volume(-1, SFXVolume);
+			
+		}
+		//button [+] SFXvolume
+		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume += 10;
+			if (SFXVolume > 100)
+			{
+				SFXVolume = 100;
+			}
+			Mix_Volume(-1, SFXVolume);
+		}
+		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 206 * 2 && mouseposy < 232 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume += 10;
+			if (SFXVolume > 100)
+			{
+				SFXVolume = 100;
+			}
+			Mix_Volume(-1, SFXVolume);
+		}
+	
+		
 		// escape setting
 		if (mouseposx > 264 * 2 && mouseposx < 311 * 2 && mouseposy >32 * 2 && mouseposy < 80 * 2)
 		{
@@ -277,31 +321,80 @@ bool game::MenuRestartLoop()
 	//music
 	if (setting == true)
 	{
-		if (MusicOn == true)
+		//button [-] musicvolume
+		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
-			if (mouseposx > 100 * 2 && mouseposx < 150 * 2 && mouseposy > 136 * 2 && mouseposy < 176 * 2)
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume -= 10;
+			if (MusicVolume < 0)
 			{
-				Mix_PlayChannel(-1, menusoundclick, 0);
-				Mix_VolumeMusic(0);
-				MusicOn = false;
+				MusicVolume = 0;
 			}
+			Mix_VolumeMusic(MusicVolume);
 		}
-		else
-			if (MusicOn == false)
+		//button [+] musicvolume
+		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume += 10;
+			if (MusicVolume > 100)
 			{
-				if (mouseposx > 100 * 2 && mouseposx < 150 * 2 && mouseposy > 136 * 2 && mouseposy < 176 * 2)
-				{
-					Mix_PlayChannel(-1, menusoundclick, 0);
-					Mix_VolumeMusic(60);
-					MusicOn = true;
-				}
+				MusicVolume = 100;
 			}
+			Mix_VolumeMusic(MusicVolume);
+		}
+		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 142 * 2 && mouseposy < 169 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			MusicVolume += 10;
+			if (MusicVolume > 100)
+			{
+				MusicVolume = 100;
+			}
+			Mix_VolumeMusic(MusicVolume);
+		}
+
+		//button [-] SFXvolume
+		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume -= 10;
+			if (SFXVolume < 0)
+			{
+				SFXVolume = 0;
+			}
+			Mix_Volume(-1, SFXVolume);
+
+		}
+		//button [+] SFXvolume
+		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume += 10;
+			if (SFXVolume > 100)
+			{
+				SFXVolume = 100;
+			}
+			Mix_Volume(-1, SFXVolume);
+		}
+		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 206 * 2 && mouseposy < 232 * 2)
+		{
+			Mix_PlayChannel(-1, menusoundclick, 0);
+			SFXVolume += 10;
+			if (SFXVolume > 100)
+			{
+				SFXVolume = 100;
+			}
+			Mix_Volume(-1, SFXVolume);
+		}
+
+
 		// escape setting
 		if (mouseposx > 264 * 2 && mouseposx < 311 * 2 && mouseposy >32 * 2 && mouseposy < 80 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
 			setting = false;
-			menurestart = true;
+			mainmenu = true;
 		}
 	}
 	else
@@ -391,6 +484,7 @@ void game:: loadMainObj()
 
 	//load mushroom
 	Mushroomtexture = IMG_LoadTexture(gscreen, "img/mushroom.png");
+	Mushroomdeftexture = IMG_LoadTexture(gscreen, "img/mushroomdef.png");
 	mushroomscore = IMG_LoadTexture(gscreen, "img/score.png");
 
 	//load font
@@ -405,7 +499,7 @@ void game::arrowActive()
 
 	angle = atan2((mouseposy - p_arrow.ArrowdesRect.y), (mouseposx - p_arrow.ArrowdesRect.x)) * 180.0 / 3.14152;
 	//add bullet base on mouse state
-	if (mousedown)
+	if(!p_player.poisonous)
 	{
 		Mix_VolumeChunk(shuttingsound,20 );
 		Mix_PlayChannel(-1, shuttingsound, 0);
@@ -471,6 +565,7 @@ void game::golbinActive()
 			{
 				golbin_list.erase(golbin_list.begin() + i);
 			}
+
 		}
 		
 	}
@@ -535,22 +630,31 @@ void game::createmushroom()
 			Mix_PlayChannel(-1, pickmushroomsound, 0);
 			score++;
 			mushroom_list[i].picked = true;
+			if (mushroom_list[i].poisonous == true)
+			{
+				p_player.poisonous = true;
+				p_player.poisonoustime += 100;
+			}
 		}
-		
-		if (!mushroom_list[i].picked) // show mushroom hasn't been picked to screen
+		mushroom_list[i].mushroomcountime++;
+		printf(" % d\n" , mushroom_list[i].mushroomcountime);
+		if (!mushroom_list[i].picked && mushroom_list[i].poisonous == true ) // show mushroom hasn't been picked to screen
+		{
+			SDL_RenderCopy(gscreen, Mushroomdeftexture, NULL, &mushroom_list[i].MushroomDesRect);
+		}
+		if (!mushroom_list[i].picked && mushroom_list[i].poisonous == false) // show mushroom hasn't been picked to screen
 		{
 			SDL_RenderCopy(gscreen, Mushroomtexture, NULL, &mushroom_list[i].MushroomDesRect);
 		}
 	
 	}
+	// erase mushroom was show too long or has been picked
 	for (int i = 0; i < mushroom_list.size(); ++i)
-	if (mushroom_list[i].picked)
 	{
-		mushroom_list[i].mushroomcountime++;
-		if (mushroom_list[i].mushroomcountime > 200)
-		{
-			mushroom_list.erase(mushroom_list.begin() + i);
-		}
+		if (mushroom_list[i].picked || mushroom_list[i].mushroomcountime > 600)
+			{
+				mushroom_list.erase(mushroom_list.begin() + i);
+			}
 	}
 }
 void game::create()
@@ -625,7 +729,14 @@ void game::gameloop()
 		}
 		p_player.Show(gscreen);
 		p_player.Doplayer();
-
+		if (p_player.poisonoustime > 0)
+		{
+			p_player.poisonoustime--;
+		}
+		if (p_player.poisonoustime == 0)
+		{
+			p_player.poisonous = false;
+		}
 		arrowActive();
 
 		p_arrow.Show(angle, gscreen, p_arrow.attack);
@@ -675,10 +786,11 @@ void game::GAME()
 	menurestart = false;
 	menuLose = false;
 	MusicOn = true;
-
+	MusicVolume = 60;
+	SFXVolume = 60;
 	while (quit == false)
 	{
-		Mix_VolumeMusic(60);
+		Mix_VolumeMusic(MusicVolume);
 		Mix_PlayMusic(gMusic, -1);
 		//menu
 		while (mainmenu == true || setting == true || howtoplay == true)

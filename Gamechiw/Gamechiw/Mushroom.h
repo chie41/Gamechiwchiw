@@ -11,6 +11,7 @@ public:
 	void show(SDL_Renderer* des, SDL_Texture* p_object);
 	bool picked;
 	int mushroomcountime;
+	bool poisonous;
 };
 
 #endif // !MUSHROOM_H_

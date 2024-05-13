@@ -22,6 +22,8 @@ player::player()
 	status_ = STAND;
 	input_type_.standing_ = 1;
 	health = 5;
+	
+	poisonous = false;
 }
 
 player::~player()

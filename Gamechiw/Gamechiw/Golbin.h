@@ -4,7 +4,7 @@
 #include"CommFuction.h"
 #include"BaseObject.h"
 
-#define GOLBIN_SPEED 5
+#define GOLBIN_SPEED 3
 #define MAX_GOLBIN_NUM 26
 class Golbin :public BaseObject
 {

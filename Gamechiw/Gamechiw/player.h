@@ -35,6 +35,8 @@ public:
 	SDL_RendererFlip typeFlip;
 
 	int health;
+	bool poisonous; 
+	int poisonoustime;
 private:
 	int x_val;
 	int y_val;

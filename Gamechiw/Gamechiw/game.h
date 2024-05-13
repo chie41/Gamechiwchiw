@@ -82,6 +82,7 @@ private:
 /*-------------------------------*/
 	//Mushroom
 	SDL_Texture* Mushroomtexture;
+	SDL_Texture* Mushroomdeftexture;
 	vector <mushroom> mushroom_list;
 	void createmushroom();
 	int maxmushroom = 3;
@@ -106,5 +107,7 @@ private:
 	Mix_Chunk* p_playermovesound;
 	Mix_Chunk* shuttingsound;
 	void loadSound();
+	int MusicVolume;
+	int SFXVolume;
 };
 #endif // 

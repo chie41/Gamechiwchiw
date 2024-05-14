@@ -485,11 +485,17 @@ void game:: loadMainObj()
 	//load mushroom
 	Mushroomtexture = IMG_LoadTexture(gscreen, "img/mushroom.png");
 	Mushroomdeftexture = IMG_LoadTexture(gscreen, "img/mushroomdef.png");
+	MushroomBufTexture = IMG_LoadTexture(gscreen, "img/mushroombuf.png");
 	mushroomscore = IMG_LoadTexture(gscreen, "img/score.png");
 
 	//load font
 	gFont = TTF_OpenFont("img/font.ttf", 20);
 	textColor = { 0, 0, 0 };
+
+	//load poision effect
+	Poision_texture = IMG_LoadTexture(gscreen, "img/poisonous.png");
+	//load buff effect
+	Buff_texture = IMG_LoadTexture(gscreen, "img/Buff.png");
 }
 
 void game::arrowActive()
@@ -499,13 +505,42 @@ void game::arrowActive()
 
 	angle = atan2((mouseposy - p_arrow.ArrowdesRect.y), (mouseposx - p_arrow.ArrowdesRect.x)) * 180.0 / 3.14152;
 	//add bullet base on mouse state
-	if(!p_player.poisonous)
+	if(p_player.buff)
 	{
 		Mix_VolumeChunk(shuttingsound,20 );
 		Mix_PlayChannel(-1, shuttingsound, 0);
 		bullet __bullet;
 		__bullet.bulletDesRect.x = p_arrow.ArrowdesRect.x;
 		__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y+15;
+		SDL_GetMouseState(&mouseposx, &mouseposy);
+		__bullet.f1 = __bullet.getWAYf1(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		__bullet.f2 = __bullet.getWAYf2(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		_bullet.push_back(__bullet);
+
+		bullet __bullet2;
+		__bullet2.bulletDesRect.x = p_arrow.ArrowdesRect.x;
+		__bullet2.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
+		SDL_GetMouseState(&mouseposx, &mouseposy);
+		__bullet2.f1 = __bullet2.getWAYf1(mouseposx - 30, mouseposy- 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		__bullet2.f2 = __bullet2.getWAYf2(mouseposx - 30, mouseposy - 30 , p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		_bullet.push_back(__bullet2);
+
+		bullet __bullet3;
+		__bullet3.bulletDesRect.x = p_arrow.ArrowdesRect.x;
+		__bullet3.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
+		SDL_GetMouseState(&mouseposx, &mouseposy);
+		__bullet3.f1 = __bullet3.getWAYf1(mouseposx + 30, mouseposy + 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		__bullet3.f2 = __bullet3.getWAYf2(mouseposx + 30, mouseposy + 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		_bullet.push_back(__bullet3);
+	}
+	else
+	if (!p_player.poisonous)
+	{
+		Mix_VolumeChunk(shuttingsound, 20);
+		Mix_PlayChannel(-1, shuttingsound, 0);
+		bullet __bullet;
+		__bullet.bulletDesRect.x = p_arrow.ArrowdesRect.x;
+		__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
 		SDL_GetMouseState(&mouseposx, &mouseposy);
 		__bullet.f1 = __bullet.getWAYf1(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
 		__bullet.f2 = __bullet.getWAYf2(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
@@ -632,17 +667,33 @@ void game::createmushroom()
 			mushroom_list[i].picked = true;
 			if (mushroom_list[i].poisonous == true)
 			{
-				p_player.poisonous = true;
-				p_player.poisonoustime += 100;
+				if (!p_player.buff)
+				{
+					p_player.poisonous = true;
+					p_player.poisonoustime += 200;
+				}
 			}
+			else
+				if (mushroom_list[i].buff == true)
+				{
+					p_player.poisonous = false;
+					p_player.poisonoustime = 0;
+					p_player.buff = true;
+					p_player.bufftime += 200;
+				}
 		}
 		mushroom_list[i].mushroomcountime++;
-		printf(" % d\n" , mushroom_list[i].mushroomcountime);
 		if (!mushroom_list[i].picked && mushroom_list[i].poisonous == true ) // show mushroom hasn't been picked to screen
 		{
 			SDL_RenderCopy(gscreen, Mushroomdeftexture, NULL, &mushroom_list[i].MushroomDesRect);
 		}
-		if (!mushroom_list[i].picked && mushroom_list[i].poisonous == false) // show mushroom hasn't been picked to screen
+		else
+		if (!mushroom_list[i].picked && mushroom_list[i].buff == true) // show mushroom hasn't been picked to screen
+		{
+			SDL_RenderCopy(gscreen, MushroomBufTexture, NULL, &mushroom_list[i].MushroomDesRect);
+		}
+		else
+		if (!mushroom_list[i].picked) // show mushroom hasn't been picked to screen
 		{
 			SDL_RenderCopy(gscreen, Mushroomtexture, NULL, &mushroom_list[i].MushroomDesRect);
 		}
@@ -671,6 +722,43 @@ void game::create()
 	
 }
 
+void game::BloodRandom()
+{
+	//if (p_player.health <= 3)
+	{
+		if (!HeartYES)
+		{
+			
+			if (p_player.health == 5) HeartYES = ((rand() % 500) == 1) ? true : false;
+			else
+			if (p_player.health == 4 ) HeartYES = ((rand() % 400) == 1) ? true : false;
+			else
+				if (p_player.health <= 3) HeartYES = ((rand() % 300) == 1) ? true : false;
+			HeartDesRect.w = 56/2;
+			HeartDesRect.h = 56/2;
+			HeartDesRect.x = rand() % SCREEN_WIDTH - HeartDesRect.w;
+			if (HeartDesRect.x < 0)
+				HeartDesRect.x = 0;
+			HeartDesRect.y = rand() % SCREEN_HEIGHT - HeartDesRect.h;
+			if (HeartDesRect.y < 0)
+				HeartDesRect.y = 0;
+
+		}
+	}
+		if (HeartYES)
+		{
+			SDL_RenderCopy(gscreen, Heart, NULL, &HeartDesRect);
+			SDL_Rect playerDesRect3 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
+			if (SDL_HasIntersection(&playerDesRect3, &HeartDesRect))
+			{
+				Mix_PlayChannel(-1, pickmushroomsound, 0);
+				if(p_player.health<5)
+				p_player.health++;
+				HeartYES = false;
+				
+			}
+		}
+}
 void game::statusbar()
 {
 	//freesurface to reduce memory
@@ -694,7 +782,33 @@ void game::statusbar()
 		SDL_RenderCopy(gscreen, Heart, NULL, &HeartStatusRect);
 	}
 }
+void game::playereffect()
+{
+	if (p_player.poisonoustime > 0)
+	{
+		p_player.poisonoustime--;
+		SDL_Rect* current_clip = &p_player.frame_clip_[p_player.framey_][p_player.framex_];
+		SDL_Rect renderQuad = p_player.playerdesRect;
+		SDL_RenderCopyEx(gscreen, Poision_texture, current_clip, &renderQuad, NULL, NULL, SDL_FLIP_NONE);
 
+	}
+	if (p_player.poisonoustime == 0)
+	{
+		p_player.poisonous = false;
+	}
+	if (p_player.bufftime > 0)
+	{
+		p_player.bufftime--;
+		SDL_Rect* current_clip = &p_player.frame_clip_[p_player.framey_][p_player.framex_];
+		SDL_Rect renderQuad = p_player.playerdesRect;
+		SDL_RenderCopyEx(gscreen, Buff_texture, current_clip, &renderQuad, NULL, NULL, SDL_FLIP_NONE);
+
+	}
+	if (p_player.bufftime == 0)
+	{
+		p_player.buff = false;
+	}
+}
 void game::gamereset()
 {
 	_bullet.erase(_bullet.begin(), _bullet.end());
@@ -704,17 +818,21 @@ void game::gamereset()
 	p_player.playerdesRect.y = SCREEN_HEIGHT / 2;
 	p_player.health = 5;
 	score = 0;
+	p_player.poisonous = false;
+	p_player.poisonoustime = 0;
 }
 void game::gameloop()
 {
 
 	SDL_RenderClear(gscreen);
 	SDL_GetMouseState(&mouseposx, &mouseposy);
+
 		create();
 
-		createmushroom();
+		BloodRandom();
+		createmushroom();                                                                
 
-		creategolbin();
+		creategolbin();                                                                  
 		golbinActive();
 
 		if (mouseposx - (p_player.playerdesRect.x + 96) <= 0)
@@ -727,27 +845,20 @@ void game::gameloop()
 			p_player.typeFlip = SDL_FLIP_NONE;
 			p_arrow.typeFlip = SDL_FLIP_NONE;
 		}
-		p_player.Show(gscreen);
+		p_player.Show(gscreen);                                                           
 		p_player.Doplayer();
-		if (p_player.poisonoustime > 0)
-		{
-			p_player.poisonoustime--;
-		}
-		if (p_player.poisonoustime == 0)
-		{
-			p_player.poisonous = false;
-		}
+
+		playereffect();                                                                  
 		arrowActive();
 
 		p_arrow.Show(angle, gscreen, p_arrow.attack);
-
-		SDL_Texture* playertest2 = IMG_LoadTexture(gscreen, "img/playersize2.png");
-		SDL_Rect playerDesRect2 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
 		statusbar();
-		//SDL_RenderCopy(gscreen, MenuText[10], NULL, NULL);
 		SDL_Rect PauseDesRect = { SCREEN_WIDTH / 2 - 32 ,0,64,64 };
-		if (mouseposx > SCREEN_WIDTH / 2 - 32 && mouseposx < SCREEN_WIDTH / 2 - 32 + 64
-			&& mouseposy > 0 && mouseposy < 64 && mousedown && !menurestart)
+		if (mouseposx > SCREEN_WIDTH / 2 - 32 
+			&& mouseposx < SCREEN_WIDTH / 2 - 32 + 64
+			&& mouseposy > 0 && mouseposy < 64 
+			&& mousedown 
+			&& !menurestart)
 		{
 				Mix_PlayChannel(-1, menusoundclick, 0);
 			//draw restart
@@ -788,6 +899,7 @@ void game::GAME()
 	MusicOn = true;
 	MusicVolume = 60;
 	SFXVolume = 60;
+	HeartYES = false;
 	while (quit == false)
 	{
 		Mix_VolumeMusic(MusicVolume);

@@ -24,6 +24,9 @@ player::player()
 	health = 5;
 	
 	poisonous = false;
+	poisonoustime = 0;
+	buff = false;
+	bufftime = 0;
 }
 
 player::~player()
@@ -90,6 +93,7 @@ void player::Show(SDL_Renderer* des)
 	playerdesRect = renderQuad;
 	//SDL_RenderCopy(des, p_object_, &frame_clip_[1][1], &renderQuad);
 	//SDL_RenderCopy(des, p_object_, current_clip, &renderQuad);
+	if(!poisonous && !buff)
 	SDL_RenderCopyEx(des, p_object_, current_clip, &renderQuad, 0, NULL, typeFlip);
 }
 

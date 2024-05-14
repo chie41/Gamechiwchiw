@@ -9,7 +9,9 @@ mushroom::mushroom()
 	
 	picked = false;
 	mushroomcountime = 0;
+	buff = ((rand() % 30) == 1) ? true : false;
 	poisonous = ( (rand()%2) == 1) ? true : false;
+	if (buff) poisonous = false;
 };
 
 void mushroom::show(SDL_Renderer* des, SDL_Texture* p_object)

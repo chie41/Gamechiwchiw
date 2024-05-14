@@ -37,6 +37,11 @@ public:
 	int health;
 	bool poisonous; 
 	int poisonoustime;
+	bool buff;
+	int bufftime;
+	SDL_Rect frame_clip_[6][6];
+	int framex_;//count frame
+	int framey_;
 private:
 	int x_val;
 	int y_val;
@@ -47,10 +52,7 @@ private:
 	int width_frame_;
 	int height_frame_;
 
-	SDL_Rect frame_clip_[6][6];
 	Input input_type_;
-	int framex_;//count frame
-	int framey_;
 
 	// screen;
 	int start_x_;

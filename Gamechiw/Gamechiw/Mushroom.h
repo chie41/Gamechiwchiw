@@ -12,6 +12,7 @@ public:
 	bool picked;
 	int mushroomcountime;
 	bool poisonous;
+	bool buff;
 };
 
 #endif // !MUSHROOM_H_

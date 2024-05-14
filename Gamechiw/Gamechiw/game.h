@@ -50,6 +50,17 @@ private:
 	//player
 	player p_player;
 	SDL_Texture* Heart;
+	void BloodRandom(); 
+	SDL_Rect HeartDesRect;
+	bool HeartYES;
+
+	//posion
+	SDL_Texture* Poision_texture;
+	//buff
+	SDL_Texture* Buff_texture;
+
+	void playereffect();
+
 /*-------------------------------*/
 	//Arrow
 	//Gun fuction
@@ -75,7 +86,7 @@ private:
 	vector <Golbin> golbin_list;
 	int framex_golbin;
 	int	framey_golbin;
-	int maxgolbin = 20;
+	int maxgolbin = 50;
 	SDL_Texture* GolbinTexture;
 	SDL_Texture* GolbinDead;
 	SDL_Texture* blood[10];
@@ -83,6 +94,7 @@ private:
 	//Mushroom
 	SDL_Texture* Mushroomtexture;
 	SDL_Texture* Mushroomdeftexture;
+	SDL_Texture* MushroomBufTexture;
 	vector <mushroom> mushroom_list;
 	void createmushroom();
 	int maxmushroom = 3;

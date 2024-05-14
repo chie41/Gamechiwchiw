@@ -1,3 +1,4 @@
+<img src="https://i.imgur.com/ZEZf3dr.png" alt="..." width="400" />
 
 # Pick Mushrooms
 This is the game making project of INT2215 class, using C++ with SDL library.

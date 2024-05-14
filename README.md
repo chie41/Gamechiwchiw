@@ -10,10 +10,14 @@ Install Codeblocks , Visual Studio 2019 , Visual Studio Code , XCode ... then do
 Oh remember use SDL lib, you can  follow tutorials on https://lazyfoo.net/tutorials/
 
 ## Screen Shot
-<img src="<blockquote class="imgur-embed-pub" lang="en" data-id="a/tsRo9hx"  ><a href="//imgur.com/a/tsRo9hx">ScreenShot1 Game PickMushroom</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>" width="250" />
+<img src="https://i.imgur.com/gNWc3WT.png" alt="..." width="350" /> 
+<img src="https://i.imgur.com/Y1Te40zl.png" alt="..." width="350" /> 
+
 ## Video DEMO
+
 
 ## Credit
 - This game asset is from https://pixelfrog-assets.itch.io/tiny-swords
 - Many sounds from the internet , but i can't remember where i downloaded them
 - Free font from Google Fonts
+

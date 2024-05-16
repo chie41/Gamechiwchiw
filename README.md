@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/ZEZf3dr.png" alt="..." width="300" />
+<img src="https://i.imgur.com/ZEZf3dr.png" alt="..." width="350" />
 
 # Pick Mushrooms
 This is the game making project of INT2215 class, using C++ with SDL library.
@@ -20,7 +20,7 @@ https://i.imgur.com/CvrR1Q5.png
 <img src="https://i.imgur.com/Y1Te40zl.png" alt="..." width="500" /> 
 
 ## Video DEMO
-
+[![Watch the video](https://i.imgur.com/MXd9ovv.png)](https://youtu.be/sbu7yrw2PX4)
 
 ## Credit
 - This game asset is from https://pixelfrog-assets.itch.io/tiny-swords

@@ -9,7 +9,7 @@ mushroom::mushroom()
 	
 	picked = false;
 	mushroomcountime = 0;
-	buff = ((rand() % 30) == 1) ? true : false;
+	buff = ((rand() % 5) == 1) ? true : false;
 	poisonous = ( (rand()%2) == 1) ? true : false;
 	if (buff) poisonous = false;
 };

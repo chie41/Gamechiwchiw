@@ -72,7 +72,7 @@ void game::close()
 	SDL_Quit();
 
 }
-
+//load texture, sound
 void game::loadSound()
 {
 	gMusic = Mix_LoadMUS("sound/background.wav");
@@ -95,7 +95,48 @@ void game::loadSound()
 	shuttingsound = Mix_LoadWAV("sound/shutting.wav");
 
 }
+void game::loadMainObj()
+{
+	g_Background = IMG_LoadTexture(gscreen, "img/bkground.png");
+	//load player
+	p_player.loadImg("img/Pawn_Blue.png", gscreen);
+	p_player.set_clips();
 
+	//load arrowplayer
+	p_arrow.loadImg("img/Mini gun.png", gscreen);
+	//	p_arrow.setclips();
+		//load bullet
+	bulletTex = IMG_LoadTexture(gscreen, "img/Bullet3.png");
+
+	//setclip for golbins
+	clipgolbin.setclip();
+	GolbinTexture = IMG_LoadTexture(gscreen, "img/Golbin.png");
+	//GolbinDead = IMG_LoadTexture(gscreen, "img/Golbin.png");
+
+	//load blood
+	blood[1] = IMG_LoadTexture(gscreen, "img/blood1.png");
+	blood[2] = IMG_LoadTexture(gscreen, "img/blood2.png");
+	blood[3] = IMG_LoadTexture(gscreen, "img/blood3.png");
+	blood[4] = IMG_LoadTexture(gscreen, "img/blood4.png");
+	blood[5] = IMG_LoadTexture(gscreen, "img/blood5.png");
+	//load heart health player
+	Heart = IMG_LoadTexture(gscreen, "img/blood.png");
+
+	//load mushroom
+	Mushroomtexture = IMG_LoadTexture(gscreen, "img/mushroom.png");
+	Mushroomdeftexture = IMG_LoadTexture(gscreen, "img/mushroomdef.png");
+	MushroomBufTexture = IMG_LoadTexture(gscreen, "img/mushroombuf.png");
+	mushroomscore = IMG_LoadTexture(gscreen, "img/score.png");
+
+	//load font
+	gFont = TTF_OpenFont("img/font.ttf", 20);
+	textColor = { 0, 0, 0 };
+
+	//load poision effect
+	Poision_texture = IMG_LoadTexture(gscreen, "img/poisonous.png");
+	//load buff effect
+	Buff_texture = IMG_LoadTexture(gscreen, "img/Buff.png");
+}
 void game::loadMenuTexture()
 {
 
@@ -117,62 +158,8 @@ void game::loadMenuTexture()
 
 	MenuText[12] = IMG_LoadTexture(gscreen, "img/YouLose.png");
 }
-void game::drawmenu()
-{
-	SDL_GetMouseState(&mouseposx, &mouseposy);
-	//SDL_RenderClear(gscreen);
-	//draw setting
-	if (setting) 
-	{
-		SDL_RenderCopy(gscreen, MenuText[6], NULL, NULL);
-	}
 
-	if (mainmenu && !howtoplay && !setting)
-	{
-		SDL_RenderCopy(gscreen, MenuText[0], NULL, NULL);
-		
-	}
-	//draw how to play 
-	if (howtoplay)
-	{
-		SDL_RenderCopy(gscreen, MenuText[5], NULL, NULL);
-	}
-	//draw menurestart
-	if (menurestart)
-	{
-		SDL_RenderCopy(gscreen, MenuText[11], NULL, NULL);
-
-	}
-	//menu LOSE: draw game over and score
-	if (menuLose)
-	{
-		SDL_RenderCopy(gscreen, MenuText[12], NULL, NULL);
-		// draw "score"
-		Font1 = TTF_OpenFont("img/font.ttf", 100);
-		textColor = { 0, 0, 0 };
-		scoreText = "Score";
-		SDL_FreeSurface(textSurface);
-		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
-		SDL_DestroyTexture(mTexture);
-		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
-		scoreFinal = { SCREEN_WIDTH / 2 - 130, 10, textSurface->w, textSurface->h };
-		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
-
-
-		// draw socre
-		Font1 = TTF_OpenFont("img/font.ttf",90);
-		textColor = { 0, 0, 0 };
-		scoreText = to_string(score);
-		SDL_FreeSurface(textSurface);
-		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
-		SDL_DestroyTexture(mTexture);
-		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
-		scoreFinal = { SCREEN_WIDTH / 2 - 40, 110, textSurface->w, textSurface->h };
-		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
-
-	}
-	SDL_RenderPresent(gscreen);
-}
+// handle menu
 bool game::MenuLoop()
 {
 	SDL_GetMouseState(&mouseposx, &mouseposy);
@@ -195,7 +182,7 @@ bool game::MenuLoop()
 		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume -= 10;
+			MusicVolume -= 5;
 			if (MusicVolume < 0)
 			{
 				MusicVolume = 0;
@@ -206,7 +193,7 @@ bool game::MenuLoop()
 		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume += 10;
+			MusicVolume += 5;
 			if (MusicVolume > 100)
 			{
 				MusicVolume = 100;
@@ -216,7 +203,7 @@ bool game::MenuLoop()
 		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 142 * 2 && mouseposy < 169 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume += 10;
+			MusicVolume += 5;
 			if (MusicVolume > 100)
 			{
 				MusicVolume = 100;
@@ -228,7 +215,7 @@ bool game::MenuLoop()
 		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume -= 10;
+			SFXVolume -= 5;
 			if (SFXVolume < 0)
 			{
 				SFXVolume = 0;
@@ -240,7 +227,7 @@ bool game::MenuLoop()
 		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume += 10;
+			SFXVolume += 5;
 			if (SFXVolume > 100)
 			{
 				SFXVolume = 100;
@@ -250,14 +237,13 @@ bool game::MenuLoop()
 		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 206 * 2 && mouseposy < 232 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume += 10;
+			SFXVolume += 5;
 			if (SFXVolume > 100)
 			{
 				SFXVolume = 100;
 			}
 			Mix_Volume(-1, SFXVolume);
 		}
-	
 		
 		// escape setting
 		if (mouseposx > 264 * 2 && mouseposx < 311 * 2 && mouseposy >32 * 2 && mouseposy < 80 * 2)
@@ -325,7 +311,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume -= 10;
+			MusicVolume -= 5;
 			if (MusicVolume < 0)
 			{
 				MusicVolume = 0;
@@ -336,7 +322,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 153 * 2 && mouseposy < 158 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume += 10;
+			MusicVolume += 5;
 			if (MusicVolume > 100)
 			{
 				MusicVolume = 100;
@@ -346,7 +332,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 142 * 2 && mouseposy < 169 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			MusicVolume += 10;
+			MusicVolume += 5;
 			if (MusicVolume > 100)
 			{
 				MusicVolume = 100;
@@ -358,7 +344,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 144 * 2 && mouseposx < 173 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume -= 10;
+			SFXVolume -= 5;
 			if (SFXVolume < 0)
 			{
 				SFXVolume = 0;
@@ -370,7 +356,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 242 * 2 && mouseposx < 270 * 2 && mouseposy > 215 * 2 && mouseposy < 225 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume += 10;
+			SFXVolume += 5;
 			if (SFXVolume > 100)
 			{
 				SFXVolume = 100;
@@ -380,7 +366,7 @@ bool game::MenuRestartLoop()
 		if (mouseposx > 251 * 2 && mouseposx < 258 * 2 && mouseposy > 206 * 2 && mouseposy < 232 * 2)
 		{
 			Mix_PlayChannel(-1, menusoundclick, 0);
-			SFXVolume += 10;
+			SFXVolume += 5;
 			if (SFXVolume > 100)
 			{
 				SFXVolume = 100;
@@ -455,49 +441,100 @@ bool game::MenuLOSELoop()
 	return false;
 
 }
-void game:: loadMainObj()
+void game::drawmenu()
 {
-	g_Background = IMG_LoadTexture(gscreen, "img/bkground.png");
-	//load player
-	p_player.loadImg("img/Pawn_Blue.png", gscreen);
-	p_player.set_clips();
+	SDL_GetMouseState(&mouseposx, &mouseposy);
+	//SDL_RenderClear(gscreen);
+	//draw setting
+	if (setting)
+	{
 
-	//load arrowplayer
-	p_arrow.loadImg("img/Mini gun.png", gscreen);
-//	p_arrow.setclips();
-	//load bullet
-	bulletTex = IMG_LoadTexture(gscreen, "img/Bullet3.png");
+		SDL_RenderCopy(gscreen, MenuText[6], NULL, NULL);
 
-	//setclip for golbins
-	clipgolbin.setclip();
-	GolbinTexture = IMG_LoadTexture(gscreen, "img/Golbin.png");
-	//GolbinDead = IMG_LoadTexture(gscreen, "img/Golbin.png");
+		Font1 = TTF_OpenFont("img/font.ttf", 70);
+		textColor = { 0, 0, 0 };
+		scoreText = to_string(MusicVolume);
+		SDL_FreeSurface(textSurface);
+		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
+		SDL_DestroyTexture(mTexture);
+		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
+		scoreFinal = { SCREEN_WIDTH / 2 - 20, 240, textSurface->w, textSurface->h };
+		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
 
-	//load blood
-	blood[1] = IMG_LoadTexture(gscreen, "img/blood1.png");
-	blood[2] = IMG_LoadTexture(gscreen, "img/blood2.png");
-	blood[3] = IMG_LoadTexture(gscreen, "img/blood3.png");
-	blood[4] = IMG_LoadTexture(gscreen, "img/blood4.png");
-	blood[5] = IMG_LoadTexture(gscreen, "img/blood5.png");
-	//load heart health player
-	Heart = IMG_LoadTexture(gscreen, "img/blood.png");
+		Font1 = TTF_OpenFont("img/font.ttf", 70);
+		textColor = { 0, 0, 0 };
+		scoreText = to_string(SFXVolume);
+		SDL_FreeSurface(textSurface);
+		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
+		SDL_DestroyTexture(mTexture);
+		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
+		scoreFinal = { SCREEN_WIDTH / 2 - 20, 370, textSurface->w, textSurface->h };
+		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
+	}
 
-	//load mushroom
-	Mushroomtexture = IMG_LoadTexture(gscreen, "img/mushroom.png");
-	Mushroomdeftexture = IMG_LoadTexture(gscreen, "img/mushroomdef.png");
-	MushroomBufTexture = IMG_LoadTexture(gscreen, "img/mushroombuf.png");
-	mushroomscore = IMG_LoadTexture(gscreen, "img/score.png");
+	if (mainmenu && !howtoplay && !setting)
+	{
+		SDL_RenderCopy(gscreen, MenuText[0], NULL, NULL);
 
-	//load font
-	gFont = TTF_OpenFont("img/font.ttf", 20);
-	textColor = { 0, 0, 0 };
+	}
+	//draw how to play 
+	if (howtoplay)
+	{
+		SDL_RenderCopy(gscreen, MenuText[5], NULL, NULL);
+	}
+	//draw menurestart
+	if (menurestart)
+	{
+		SDL_RenderCopy(gscreen, MenuText[11], NULL, NULL);
 
-	//load poision effect
-	Poision_texture = IMG_LoadTexture(gscreen, "img/poisonous.png");
-	//load buff effect
-	Buff_texture = IMG_LoadTexture(gscreen, "img/Buff.png");
+	}
+	//menu LOSE: draw game over and score
+	if (menuLose)
+	{
+		SDL_RenderCopy(gscreen, MenuText[12], NULL, NULL);
+		// draw "Your mushroom"
+		Font1 = TTF_OpenFont("img/font.ttf", 70);
+		textColor = { 0, 0, 0 };
+		scoreText = "Your mushroom:";
+		SDL_FreeSurface(textSurface);
+		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
+		SDL_DestroyTexture(mTexture);
+		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
+		scoreFinal = { SCREEN_WIDTH / 2 - 250, 15, textSurface->w, textSurface->h };
+		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
+
+
+		// draw socre
+		Font1 = TTF_OpenFont("img/font.ttf", 90);
+		textColor = { 0, 0, 0 };
+		scoreText = to_string(score);
+		SDL_FreeSurface(textSurface);
+		textSurface = TTF_RenderText_Blended(Font1, scoreText.c_str(), textColor);
+		SDL_DestroyTexture(mTexture);
+		mTexture = SDL_CreateTextureFromSurface(gscreen, textSurface);
+		scoreFinal = { SCREEN_WIDTH / 2 - 40, 110, textSurface->w, textSurface->h };
+		SDL_RenderCopy(gscreen, mTexture, NULL, &scoreFinal);
+
+	}
+	SDL_RenderPresent(gscreen);
 }
 
+// create bkground
+void game::create()
+{
+	//SDL_RenderClear(gscreen);
+	if (g_Background != NULL)
+	{
+		SDL_RenderCopy(gscreen, g_Background, NULL, NULL);
+	}
+	else
+	{
+		printf("fail load bkgr!!");
+	}
+
+}
+
+//handle golbin and bullet
 void game::arrowActive()
 {
 	SDL_GetMouseState(&mouseposx, &mouseposy);
@@ -505,13 +542,13 @@ void game::arrowActive()
 
 	angle = atan2((mouseposy - p_arrow.ArrowdesRect.y), (mouseposx - p_arrow.ArrowdesRect.x)) * 180.0 / 3.14152;
 	//add bullet base on mouse state
-	if(p_player.buff)
+	if (p_player.buff)
 	{
-		Mix_VolumeChunk(shuttingsound,20 );
+		Mix_VolumeChunk(shuttingsound, 20);
 		Mix_PlayChannel(-1, shuttingsound, 0);
 		bullet __bullet;
 		__bullet.bulletDesRect.x = p_arrow.ArrowdesRect.x;
-		__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y+15;
+		__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
 		SDL_GetMouseState(&mouseposx, &mouseposy);
 		__bullet.f1 = __bullet.getWAYf1(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
 		__bullet.f2 = __bullet.getWAYf2(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
@@ -521,8 +558,8 @@ void game::arrowActive()
 		__bullet2.bulletDesRect.x = p_arrow.ArrowdesRect.x;
 		__bullet2.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
 		SDL_GetMouseState(&mouseposx, &mouseposy);
-		__bullet2.f1 = __bullet2.getWAYf1(mouseposx - 30, mouseposy- 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
-		__bullet2.f2 = __bullet2.getWAYf2(mouseposx - 30, mouseposy - 30 , p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		__bullet2.f1 = __bullet2.getWAYf1(mouseposx - 30, mouseposy - 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+		__bullet2.f2 = __bullet2.getWAYf2(mouseposx - 30, mouseposy - 30, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
 		_bullet.push_back(__bullet2);
 
 		bullet __bullet3;
@@ -534,18 +571,18 @@ void game::arrowActive()
 		_bullet.push_back(__bullet3);
 	}
 	else
-	if (!p_player.poisonous)
-	{
-		Mix_VolumeChunk(shuttingsound, 20);
-		Mix_PlayChannel(-1, shuttingsound, 0);
-		bullet __bullet;
-		__bullet.bulletDesRect.x = p_arrow.ArrowdesRect.x;
-		__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
-		SDL_GetMouseState(&mouseposx, &mouseposy);
-		__bullet.f1 = __bullet.getWAYf1(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
-		__bullet.f2 = __bullet.getWAYf2(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
-		_bullet.push_back(__bullet);
-	}
+		if (!p_player.poisonous)
+		{
+			Mix_VolumeChunk(shuttingsound, 20);
+			Mix_PlayChannel(-1, shuttingsound, 0);
+			bullet __bullet;
+			__bullet.bulletDesRect.x = p_arrow.ArrowdesRect.x;
+			__bullet.bulletDesRect.y = p_arrow.ArrowdesRect.y + 15;
+			SDL_GetMouseState(&mouseposx, &mouseposy);
+			__bullet.f1 = __bullet.getWAYf1(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+			__bullet.f2 = __bullet.getWAYf2(mouseposx, mouseposy, p_arrow.ArrowdesRect.x, p_arrow.ArrowdesRect.y);
+			_bullet.push_back(__bullet);
+		}
 
 	for (int i = 0; i < _bullet.size(); ++i)
 	{
@@ -553,12 +590,12 @@ void game::arrowActive()
 		_bullet[i].updatebullet();
 		for (int j = 0; j < golbin_list.size(); ++j)
 		{
-			if (golbin_list[j].isDead== false)
+			if (golbin_list[j].isDead == false)
 			{
 				SDL_Rect GolbinDesRect2 = { golbin_list[j].GolbinDesRect.x + 52,golbin_list[j].GolbinDesRect.y + 52,66,80 };
 				if (SDL_HasIntersection(&GolbinDesRect2, &_bullet[i].bulletDesRect) && _bullet[i].coll == false)
 				{
-					golbin_list[j].health --;
+					golbin_list[j].health--;
 					if (golbin_list[j].health == 0)
 					{
 						Mix_PlayChannel(-1, golbindeathsound, 0);
@@ -572,7 +609,7 @@ void game::arrowActive()
 		//draw the bullet
 		if (!_bullet[i].disapear() && !SDL_HasIntersection(&_bullet[i].bulletDesRect, &p_arrow.ArrowdesRect))
 		{
-			SDL_RenderCopyEx(gscreen, bulletTex, NULL, &_bullet[i].bulletDesRect, p_arrow.angle, &p_arrow.centerarrowpoint,p_arrow.typeFlip );
+			SDL_RenderCopyEx(gscreen, bulletTex, NULL, &_bullet[i].bulletDesRect, p_arrow.angle, &p_arrow.centerarrowpoint, p_arrow.typeFlip);
 		}
 
 	}
@@ -584,7 +621,20 @@ void game::arrowActive()
 
 
 }
+void game::creategolbin()
+{
+	if (golbin_list.size() < maxgolbin)
+	{
+		Golbin __golbin;
+		//check if the random position is in the screen or not because we need it to be outside
+		if (abs(__golbin.GolbinDesRect.x - p_player.playerdesRect.x) > SCREEN_WIDTH / 2 && abs(__golbin.GolbinDesRect.y - p_player.playerdesRect.y) > SCREEN_HEIGHT / 2)
+		{
+			golbin_list.push_back(__golbin);
+		}
 
+	}
+
+}
 void game::golbinActive()
 {
 	for (int i = 0; i < golbin_list.size(); ++i)
@@ -632,20 +682,8 @@ void game::golbinActive()
 
 	}
 }
-void game::creategolbin()
-{
-	if (golbin_list.size() < maxgolbin)
-	{
-		Golbin __golbin;
-		//check if the random position is in the screen or not because we need it to be outside
-		if (abs(__golbin.GolbinDesRect.x - p_player.playerdesRect.x) > SCREEN_WIDTH / 2 && abs(__golbin.GolbinDesRect.y - p_player.playerdesRect.y) > SCREEN_HEIGHT / 2)
-		{
-			golbin_list.push_back(__golbin);
-		}
 
-	}
-
-}
+//create mushroom and handle mushroom
 void game::createmushroom()
 {
 	if (mushroom_list.size() < maxmushroom)
@@ -662,7 +700,6 @@ void game::createmushroom()
 		SDL_Rect playerDesRect3 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
 		if (SDL_HasIntersection(&playerDesRect3, &mushroom_list[i].MushroomDesRect) && mushroom_list[i].picked == false)
 		{
-			Mix_PlayChannel(-1, pickmushroomsound, 0);
 			score++;
 			mushroom_list[i].picked = true;
 			if (mushroom_list[i].poisonous == true)
@@ -676,11 +713,13 @@ void game::createmushroom()
 			else
 				if (mushroom_list[i].buff == true)
 				{
+					score++;
 					p_player.poisonous = false;
 					p_player.poisonoustime = 0;
 					p_player.buff = true;
 					p_player.bufftime += 200;
 				}
+			Mix_PlayChannel(-1, pickmushroomsound, 0);
 		}
 		mushroom_list[i].mushroomcountime++;
 		if (!mushroom_list[i].picked && mushroom_list[i].poisonous == true ) // show mushroom hasn't been picked to screen
@@ -708,19 +747,6 @@ void game::createmushroom()
 			}
 	}
 }
-void game::create()
-{
-	//SDL_RenderClear(gscreen);
-	if (g_Background != NULL)
-	{
-		SDL_RenderCopy(gscreen, g_Background, NULL, NULL);
-	}
-	else
-	{
-		printf("fail load bkgr!!");
-	}
-	
-}
 
 void game::BloodRandom()
 {
@@ -728,14 +754,14 @@ void game::BloodRandom()
 	{
 		if (!HeartYES)
 		{
-			
+
 			if (p_player.health == 5) HeartYES = ((rand() % 500) == 1) ? true : false;
 			else
-			if (p_player.health == 4 ) HeartYES = ((rand() % 400) == 1) ? true : false;
-			else
-				if (p_player.health <= 3) HeartYES = ((rand() % 300) == 1) ? true : false;
-			HeartDesRect.w = 56/2;
-			HeartDesRect.h = 56/2;
+				if (p_player.health == 4) HeartYES = ((rand() % 400) == 1) ? true : false;
+				else
+					if (p_player.health <= 3) HeartYES = ((rand() % 300) == 1) ? true : false;
+			HeartDesRect.w = 56 / 2;
+			HeartDesRect.h = 56 / 2;
 			HeartDesRect.x = rand() % SCREEN_WIDTH - HeartDesRect.w;
 			if (HeartDesRect.x < 0)
 				HeartDesRect.x = 0;
@@ -745,20 +771,21 @@ void game::BloodRandom()
 
 		}
 	}
-		if (HeartYES)
+	if (HeartYES)
+	{
+		SDL_RenderCopy(gscreen, Heart, NULL, &HeartDesRect);
+		SDL_Rect playerDesRect3 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
+		if (SDL_HasIntersection(&playerDesRect3, &HeartDesRect))
 		{
-			SDL_RenderCopy(gscreen, Heart, NULL, &HeartDesRect);
-			SDL_Rect playerDesRect3 = { p_player.playerdesRect.x + 66 , p_player.playerdesRect.y + 68,60,54 };
-			if (SDL_HasIntersection(&playerDesRect3, &HeartDesRect))
-			{
-				Mix_PlayChannel(-1, pickmushroomsound, 0);
-				if(p_player.health<5)
+			Mix_PlayChannel(-1, pickmushroomsound, 0);
+			if (p_player.health < 5)
 				p_player.health++;
-				HeartYES = false;
-				
-			}
+			HeartYES = false;
+
 		}
+	}
 }
+
 void game::statusbar()
 {
 	//freesurface to reduce memory
@@ -809,6 +836,7 @@ void game::playereffect()
 		p_player.buff = false;
 	}
 }
+
 void game::gamereset()
 {
 	_bullet.erase(_bullet.begin(), _bullet.end());
@@ -820,6 +848,8 @@ void game::gamereset()
 	score = 0;
 	p_player.poisonous = false;
 	p_player.poisonoustime = 0;
+	p_player.buff = false;
+	p_player.bufftime = 0;
 }
 void game::gameloop()
 {
@@ -876,7 +906,7 @@ void game::gameloop()
 	SDL_RenderPresent(gscreen);
 }
 
-
+//main loop
 void game::GAME()
 {
 	if (!init())
